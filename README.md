@@ -108,6 +108,4 @@ movie-review-sentiment-analysis/
 - Experiment with additional text classification methods.
 - Improve the interactive application.
 
-## Author
 
-Developed as a practical machine learning portfolio project.
