@@ -1,0 +1,32 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Model files
+*.joblib
+*.pkl
+*.pickle
+
+# Secrets and environment variables
+.env
+.env.*
+
+# Cache
+.cache/
+.pytest_cache/
+.streamlit/secrets.toml
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Temporary files
+*.log
