@@ -147,16 +147,17 @@ analyze = st.button(
 # 6. Prediction
 # -----------------------------
 if analyze:
-if not review.strip():
+    if not review.strip():
     st.markdown(
         """
         <div style="
             background-color: #FFF3CD;
-            color: #856404;
+            color: #000000 !important;
             padding: 14px 18px;
             border-radius: 10px;
-            border: 1px solid #FFECB5;
-            font-weight: 600;
+            border: 1px solid #E0B84F;
+            font-weight: 700;
+            font-size: 16px;
         ">
             ⚠️ Please enter a movie review first.
         </div>
