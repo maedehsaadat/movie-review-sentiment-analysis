@@ -181,6 +181,25 @@ st.markdown(
     div[data-testid="stMetricValue"] {
         color: #E7B85C;
     }
+
+    /* Empty review warning - force black text */
+    #empty-review-warning,
+    #empty-review-warning * {
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        opacity: 1 !important;
+    }
+
+    #empty-review-warning {
+        background-color: #FFF3CD !important;
+        border: 2px solid #E0B84F;
+        border-radius: 10px;
+        padding: 16px 18px;
+        margin-top: 15px;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
     </style>
     """,
     unsafe_allow_html=True,
@@ -245,18 +264,8 @@ if analyze:
 
         st.markdown(
             """
-            <div style="
-                background-color: #FFF3CD;
-                color: #000000 !important;
-                padding: 16px;
-                border-radius: 10px;
-                border: 2px solid #E0B84F;
-                font-size: 16px;
-                font-weight: 700;
-            ">
-                <span style="color: #000000 !important;">
-                    ⚠️ Please enter a movie review first.
-                </span>
+            <div id="empty-review-warning">
+                ⚠️ Please enter a movie review first.
             </div>
             """,
             unsafe_allow_html=True,
