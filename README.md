@@ -1,111 +1,148 @@
-# Movie Review Sentiment Analysis
+# IMDb Movie Review Sentiment Analysis
 
-A machine learning project that classifies movie reviews as positive or negative using two datasets and compares traditional text classification models.
+A machine learning project that analyzes movie reviews and predicts whether their sentiment is **Positive** or **Negative**.
+
+## Live Demo
+
+Try the deployed application:
+
+[**IMDb Sentiment Analyzer – Streamlit App**](https://maedehsaadat-movie-review-sentiment-analysis-imdb-app-zmiwor.streamlit.app/)
 
 ## Project Overview
 
-This project explores sentiment analysis using TF-IDF text features and two machine learning algorithms:
+This project demonstrates a machine learning approach to binary sentiment classification. It uses text preprocessing and TF-IDF feature extraction to transform movie reviews into numerical features, then applies classification models to predict sentiment.
 
-- Logistic Regression
-- Multinomial Naive Bayes
+The project includes two sentiment analysis experiments using different datasets and a Streamlit web application that allows users to enter a movie review and receive a sentiment prediction with confidence scores.
 
-Experiments were conducted on the NLTK Movie Reviews dataset and the IMDb movie reviews dataset.
+## Project Structure
 
-A Streamlit application is included for interactive sentiment prediction.
+```text
+movie-review-sentiment-analysis/
+│
+├── models/
+│   ├── imdb_sentiment_model.joblib
+│   ├── sentiment_model.joblib
+│   └── .gitkeep
+│
+├── results/
+│   └── NLTK experiment results
+│
+├── results_imdb/
+│   └── IMDb experiment results
+│
+├── app.py
+├── imdb_app.py
+├── sentiment_analysis.py
+├── imdb_experiment.py
+│
+├── requirements.txt
+├── README.md
+└── .gitignore
+```
+
+### File Descriptions
+
+| File / Directory | Description |
+|---|---|
+| `models/` | Stores trained machine learning models. |
+| `imdb_sentiment_model.joblib` | Trained IMDb sentiment model used by the deployed application. |
+| `results/` | Contains evaluation results from the NLTK experiment. |
+| `results_imdb/` | Contains evaluation results from the IMDb experiment. |
+| `app.py` | Streamlit application for the initial sentiment analysis experiment. |
+| `imdb_app.py` | Streamlit application for IMDb sentiment prediction. |
+| `sentiment_analysis.py` | Implements the initial sentiment analysis experiment using the NLTK movie reviews dataset. |
+| `imdb_experiment.py` | Implements the IMDb sentiment analysis experiment. |
+| `requirements.txt` | Lists the required Python dependencies. |
+| `README.md` | Project documentation. |
+| `.gitignore` | Specifies files and directories excluded from Git tracking. |
+
+## Features
+
+- Positive and negative sentiment classification
+- Text preprocessing and TF-IDF feature extraction
+- Machine learning models, including Logistic Regression and Multinomial Naive Bayes
+- Experiments on NLTK Movie Reviews and IMDb datasets
+- Model evaluation and performance comparison
+- Confusion matrices and classification metrics
+- Analysis of misclassified reviews
+- Interactive web application built with Streamlit
+- Prediction confidence and positive/negative probabilities
+- Saved model artifacts for reuse
 
 ## Technologies
 
 - Python
 - Scikit-learn
 - NLTK
-- Hugging Face Datasets
+- Pandas
+- NumPy
+- Matplotlib
 - TF-IDF
 - Logistic Regression
 - Multinomial Naive Bayes
+- Joblib
 - Streamlit
-- Pandas
-- Matplotlib
+- Git & GitHub
 
-## Datasets
+## Saved Model Artifacts
 
-### NLTK Movie Reviews
+The trained IMDb model is stored in the `models/` directory.
 
-- 2,000 movie reviews
-- 1,000 negative and 1,000 positive reviews
-- 80/20 stratified train-test split
+| File | Description |
+|---|---|
+| `imdb_sentiment_model.joblib` | Trained IMDb sentiment model used by the deployed Streamlit application. |
 
-### IMDb Movie Reviews
+## Run Locally
 
-- 25,000 training reviews
-- 25,000 test reviews
-- Balanced positive and negative classes
-- Official train/test split
+### 1. Clone the repository
 
-## Methodology
+```bash
+git clone https://github.com/maedehsaadat/movie-review-sentiment-analysis.git
+```
 
-1. Load and prepare the review text.
-2. Convert text into numerical features using TF-IDF.
-3. Train Logistic Regression and Multinomial Naive Bayes.
-4. Evaluate both models using classification metrics.
-5. Compare model performance.
-6. Use Streamlit to predict sentiment for new reviews.
+### 2. Navigate to the project directory
 
-## Results
+```bash
+cd movie-review-sentiment-analysis
+```
 
-### NLTK Dataset
-
-| Model | Accuracy |
-|---|---:|
-| Logistic Regression | 84.25% |
-| Multinomial Naive Bayes | 82.50% |
-
-### IMDb Dataset
-
-| Model | Accuracy |
-|---|---:|
-| Logistic Regression | 88.82% |
-| Multinomial Naive Bayes | 85.65% |
-
-Logistic Regression achieved higher accuracy than Multinomial Naive Bayes on both datasets.
-
-Results from the two datasets should not be interpreted as a direct, controlled comparison because their sizes and data distributions differ.
-
-## Run the IMDb App
-
-Install the required packages:
+### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Run the app:
+### 4. Run the IMDb Streamlit application
 
 ```bash
 streamlit run imdb_app.py
 ```
 
-The saved model file must be available at the path expected by the application. See the project setup instructions before running the app.
-
-## Project Structure
+Make sure the trained model is available at:
 
 ```text
-movie-review-sentiment-analysis/
-├── sentiment_analysis.py
-├── imdb_experiment.py
-├── app.py
-├── imdb_app.py
-├── results/
-├── results_imdb/
-├── README.md
-├── requirements.txt
-└── .gitignore
+models/imdb_sentiment_model.joblib
 ```
 
-## Future Improvements
+### Run the Initial Sentiment Analysis Application
 
-- Add more detailed error analysis.
-- Evaluate probability calibration.
-- Experiment with additional text classification methods.
-- Improve the interactive application.
+To run the initial NLTK-based application:
 
+```bash
+streamlit run app.py
+```
 
+## How to Use
+
+1. Open the Streamlit application.
+2. Enter an English movie review in the text area.
+3. Click the **Analyze Sentiment** button.
+4. View the predicted sentiment and its confidence score.
+5. Review the positive and negative probability values.
+
+## Limitations
+
+- The application performs binary sentiment classification (Positive or Negative).
+- Prediction quality depends on the training data and the model's ability to generalize to new reviews.
+- The model may not interpret sarcasm, irony, or complex context reliably.
+- The application is primarily designed for English-language reviews.
