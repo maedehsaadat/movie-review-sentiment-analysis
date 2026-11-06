@@ -147,9 +147,22 @@ analyze = st.button(
 # 6. Prediction
 # -----------------------------
 if analyze:
-    if not review.strip():
-        st.warning("Please enter a movie review first.")
-
+if not review.strip():
+    st.markdown(
+        """
+        <div style="
+            background-color: #FFF3CD;
+            color: #856404;
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1px solid #FFECB5;
+            font-weight: 600;
+        ">
+            ⚠️ Please enter a movie review first.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     else:
         try:
             model = load_model()
