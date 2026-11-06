@@ -1,252 +1,370 @@
 
 from pathlib import Path
+import html
 import joblib
 import streamlit as st
 
-# -----------------------------
-# 1. Page configuration
-# -----------------------------
-st.set_page_config(
-    page_title="Movie Sentiment Analyzer",
-    page_icon="🎬",
-    layout="centered",
-)
 
 # -----------------------------
-# 2. Load the trained model
+# Model path
 # -----------------------------
 MODEL_PATH = (
     Path(__file__).resolve().parent
     / "models"
-    / "sentiment_model.joblib"
+    / "imdb_sentiment_model.joblib"
 )
 
 
-@st.cache_resource
-def load_model():
-    return joblib.load(MODEL_PATH)
+# -----------------------------
+# Page configuration
+# -----------------------------
+st.set_page_config(
+    page_title="IMDb Sentiment Analyzer",
+    page_icon="🎬",
+    layout="centered",
+)
 
 
 # -----------------------------
-# 3. Custom styling
+# Custom styling
 # -----------------------------
 st.markdown(
     """
     <style>
     .stApp {
-        background-color: #F5F7FB;
+        background: linear-gradient(
+            145deg, #171526 0%, #211d35 55%, #171526 100%
+        );
+        color: #F4F1FA;
     }
 
-    .main .block-container {
+    .block-container {
         max-width: 850px;
-        padding-top: 2rem;
+        padding-top: 2.5rem;
         padding-bottom: 3rem;
     }
 
+    h1, h2, h3, p, label, span {
+        color: #F4F1FA;
+    }
+
     .hero {
-        background: linear-gradient(135deg, #172554, #1D4ED8);
-        padding: 2rem;
-        border-radius: 18px;
-        color: white;
-        margin-bottom: 1.5rem;
+        text-align: center;
+        padding: 25px 15px 20px;
+        border: 1px solid #39334F;
+        border-radius: 20px;
+        background: rgba(31, 28, 49, 0.85);
+        margin-bottom: 25px;
     }
 
-    .hero h1 {
-        color: white;
-        font-size: 2.2rem;
-        margin-bottom: 0.5rem;
+    .hero-icon {
+        font-size: 48px;
+        margin-bottom: 5px;
     }
 
-    .hero p {
-        color: #DBEAFE;
-        font-size: 1rem;
-        margin-bottom: 0;
+    .hero-title {
+        color: #E7B85C;
+        font-size: 35px;
+        font-weight: 750;
+        margin-bottom: 12px;
     }
 
-    .result-card {
-        background: white;
-        padding: 1.4rem;
-        border-radius: 14px;
-        border: 1px solid #E2E8F0;
-        margin-top: 1rem;
+    .hero-subtitle {
+        color: #C7C0D9;
+        font-size: 16px;
+        line-height: 1.7;
     }
 
-    .positive {
-        color: #15803D;
-        font-size: 1.5rem;
-        font-weight: 700;
+    .model-tag {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 7px 13px;
+        border-radius: 20px;
+        background: #302944;
+        color: #E7B85C;
+        font-size: 13px;
     }
 
-    .negative {
-        color: #B91C1C;
-        font-size: 1.5rem;
-        font-weight: 700;
+    /* Review input and placeholder */
+    textarea {
+        background-color: #211D35 !important;
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+        border: 1px solid #51456C !important;
+        border-radius: 12px !important;
+        caret-color: #E7B85C !important;
     }
 
-    .small-note {
-        color: #64748B;
-        font-size: 0.85rem;
+    textarea::placeholder {
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+        opacity: 1 !important;
+    }
+
+    textarea:focus {
+        border-color: #E7B85C !important;
+        box-shadow: 0 0 0 1px #E7B85C !important;
     }
 
     div.stButton > button {
         width: 100%;
-        border-radius: 10px;
-        min-height: 3rem;
-        font-weight: 600;
+        border: none;
+        border-radius: 11px;
+        background: linear-gradient(90deg, #C99B45, #E7B85C);
+        color: #211D35;
+        font-size: 16px;
+        font-weight: 700;
+        padding: 12px;
+        transition: 0.2s ease;
+    }
+
+    div.stButton > button:hover {
+        background: #F0CA79;
+        color: #171526;
+        border: none;
+    }
+
+    .result-card {
+        background: #211D35;
+        border: 1px solid #49405F;
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 15px;
+    }
+
+    .result-label {
+        color: #BEB5D3;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .positive {
+        color: #73D6A0;
+        font-size: 27px;
+        font-weight: 750;
+    }
+
+    .negative {
+        color: #FF929E;
+        font-size: 27px;
+        font-weight: 750;
+    }
+
+    .confidence-number {
+        color: #E7B85C;
+        font-size: 32px;
+        font-weight: 750;
+        margin-top: 5px;
+    }
+
+    .footnote {
+        color: #A9A1BE;
+        font-size: 12px;
+        text-align: center;
+        line-height: 1.7;
+        margin-top: 25px;
+    }
+
+    div[data-testid="stMetric"] {
+        background: #211D35;
+        border: 1px solid #49405F;
+        border-radius: 12px;
+        padding: 15px;
+    }
+
+    div[data-testid="stMetricLabel"] {
+        color: #C7C0D9;
+    }
+
+    div[data-testid="stMetricValue"] {
+        color: #E7B85C;
     }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
+
 # -----------------------------
-# 4. Header
+# Load model
+# -----------------------------
+@st.cache_resource
+def load_model():
+    return joblib.load(MODEL_PATH)
+
+
+# -----------------------------
+# Header
 # -----------------------------
 st.markdown(
     """
     <div class="hero">
-        <h1>🎬 Movie Sentiment Analyzer</h1>
-        <p>
-            Analyze movie reviews using Machine Learning.
-            Discover whether a review expresses positive
-            or negative sentiment.
-        </p>
+        <div class="hero-icon">🎬</div>
+        <div class="hero-title">IMDb Sentiment Analyzer</div>
+        <div class="hero-subtitle">
+            Discover the sentiment behind movie reviews
+            using machine learning.
+        </div>
+        <div class="model-tag">
+            TF-IDF &nbsp;·&nbsp; Logistic Regression
+        </div>
     </div>
     """,
     unsafe_allow_html=True,
 )
 
-st.markdown("### Analyze a movie review")
-st.write(
-    "Enter an English movie review below and let the model "
-    "predict its sentiment."
-)
 
 # -----------------------------
-# 5. Review input
+# Review input
 # -----------------------------
+st.markdown("### ✍️ Your Movie Review")
+
 review = st.text_area(
-    "Your movie review",
+    "Enter your review below",
     placeholder=(
-        "Example: The story was engaging, "
-        "the acting was excellent, and I loved the movie."
+        "The movie was captivating, the acting was excellent, "
+        "and the story kept me interested until the end..."
     ),
-    height=170,
-    max_chars=10000,
+    height=180,
+    label_visibility="collapsed",
 )
 
-st.caption(f"Characters entered: {len(review)}")
+st.caption("Write your review in English for best results.")
 
-analyze = st.button(
-    "🔍 Analyze Sentiment",
-    type="primary",
-    use_container_width=True,
-)
+analyze = st.button("✨  Analyze Sentiment", type="primary")
+
 
 # -----------------------------
-# 6. Prediction
+# Prediction
 # -----------------------------
 if analyze:
+
     if not review.strip():
-    st.markdown(
-        """
-        <div style="
-            background-color: #FFF3CD;
-            color: #000000 !important;
-            padding: 14px 18px;
-            border-radius: 10px;
-            border: 1px solid #E0B84F;
-            font-weight: 700;
-            font-size: 16px;
-        ">
-            ⚠️ Please enter a movie review first.
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+
+        st.markdown(
+            """
+            <div style="
+                background-color: #FFF3CD;
+                color: #000000 !important;
+                padding: 16px;
+                border-radius: 10px;
+                border: 2px solid #E0B84F;
+                font-size: 16px;
+                font-weight: 700;
+            ">
+                <span style="color: #000000 !important;">
+                    ⚠️ Please enter a movie review first.
+                </span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    elif not MODEL_PATH.exists():
+
+        st.error(f"Model file not found: {MODEL_PATH}")
+
     else:
+
         try:
             model = load_model()
-
             prediction = model.predict([review])[0]
-            probabilities = model.predict_proba([review])[0]
-
-            classes = list(model.classes_)
-            confidence = float(
-                probabilities[classes.index(prediction)]
-            )
 
             st.markdown("---")
-            st.markdown("### Analysis Result")
+            st.markdown("### 📊 Analysis Result")
 
             if prediction == "pos":
-                st.markdown(
-                    """
-                    <div class="result-card">
-                        <div class="positive">
-                            😊 Positive Sentiment
-                        </div>
-                        <p>
-                            The model predicts that this review
-                            expresses a positive opinion.
-                        </p>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
+                result_text = "😊 Positive Sentiment"
+                result_class = "positive"
 
             elif prediction == "neg":
+                result_text = "😞 Negative Sentiment"
+                result_class = "negative"
+
+            else:
+                result_text = html.escape(str(prediction))
+                result_class = "positive"
+
+            st.markdown(
+                f"""
+                <div class="result-card">
+                    <div class="result-label">
+                        Predicted sentiment
+                    </div>
+                    <div class="{result_class}">
+                        {result_text}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            if hasattr(model, "predict_proba"):
+
+                probabilities = model.predict_proba([review])[0]
+                classes = model.classes_
+
+                probability_map = dict(
+                    zip(classes, probabilities)
+                )
+
+                confidence = float(max(probabilities)) * 100
+
+                positive_prob = (
+                    float(probability_map.get("pos", 0)) * 100
+                )
+
+                negative_prob = (
+                    float(probability_map.get("neg", 0)) * 100
+                )
+
+                st.markdown("#### Prediction Confidence")
+
                 st.markdown(
-                    """
-                    <div class="result-card">
-                        <div class="negative">
-                            😞 Negative Sentiment
-                        </div>
-                        <p>
-                            The model predicts that this review
-                            expresses a negative opinion.
-                        </p>
+                    f"""
+                    <div class="confidence-number">
+                        {confidence:.2f}%
                     </div>
                     """,
                     unsafe_allow_html=True,
                 )
 
-            else:
-                st.write(f"Predicted class: {prediction}")
+                st.progress(confidence / 100)
 
-            st.markdown("#### Model probability")
-            st.progress(confidence)
-            st.write(f"**{confidence:.2%}**")
+                col1, col2 = st.columns(2)
 
-            st.caption(
-                "This percentage is the model's estimated "
-                "probability for its predicted class. "
-                "It does not guarantee that the prediction "
-                "is correct."
-            )
+                with col1:
+                    st.metric(
+                        "Positive probability",
+                        f"{positive_prob:.2f}%",
+                    )
 
-            with st.expander("About this analysis"):
-                st.write(
-                    "The model uses TF-IDF text features and "
-                    "a trained machine learning classifier. "
-                    "Its performance may vary with review "
-                    "length, wording, sarcasm, and unfamiliar "
-                    "expressions."
+                with col2:
+                    st.metric(
+                        "Negative probability",
+                        f"{negative_prob:.2f}%",
+                    )
+
+                st.caption(
+                    "These values represent the model's estimated "
+                    "class probabilities, not a guarantee of correctness."
                 )
 
         except Exception as error:
-            st.error("An error occurred while analyzing the review.")
-            st.caption(str(error))
+            st.error(f"An error occurred: {error}")
+
 
 # -----------------------------
-# 7. Footer
+# Footer
 # -----------------------------
-st.markdown("---")
 st.markdown(
     """
-    <p class="small-note" style="text-align:center;">
-        Machine Learning Project · NLP · Sentiment Analysis
-    </p>
+    <div class="footnote">
+        IMDb Movie Reviews Dataset<br>
+        Built with Python · Streamlit · Scikit-learn
+    </div>
     """,
     unsafe_allow_html=True,
 )
